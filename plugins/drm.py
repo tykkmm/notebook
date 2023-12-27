@@ -63,7 +63,7 @@ async def drm(bot: ace, m: Message):
     await UL.upload_video()
     print("Done")
     await prog.delete(True)
-finally:
+
     if os.path.exists(tPath):
         shutil.rmtree(tPath)
     shutil.rmtree(path)
