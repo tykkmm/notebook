@@ -27,11 +27,8 @@ async def drm(bot: ace, m: Message):
     print(mpd, name, Q)
 
     keys = ""
-    inputKeys = await bot.ask(m.chat.id, "**Send Kid:Key**")
-    keysData = inputKeys.text.split("\n")
-    for k in keysData:
-        key = f"{k} "
-        keys+=key
+    inputKeys = await bot.ask(m.chat.id, "**Send Key**")
+    keys = inputKeys.text
     print(keys)
 
     BOT = TgClient(bot, m, path)
