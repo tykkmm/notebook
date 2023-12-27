@@ -36,42 +36,35 @@ async def drm(bot: ace, m: Message):
     prog  = await bot.send_message(m.chat.id, f"**Downloading Drm Video!** - [{name}]({mpd})")
 
 #    cmd1 = f'yt-dlp -o "{path}/fileName.%(ext)s" -f "bestvideo.{resl}/bestvideo.2/bestvideo" --allow-unplayable-format --external-downloader aria2c "{mpd}"'
-    cmd1 = f'yt-dlp -k --allow-unplayable-formats -f "bestvideo.3/bestvideo.2/bestvideo" --fixup never "{mpd}" --external-downloader aria2c --external-downloader-args "-x 16 -s 16 -k 1M" -o "{path}/{name}.%(ext)s" --exec echo'
-    cmd2 = f'yt-dlp -k --allow-unplayable-formats -f ba --fixup never "{mpd}" --external-downloader aria2c --external-downloader-args "-x 16 -s 16 -k 1M" -o "{path}/{name}.%(ext)s" --exec echo'
+    cmd1 = f'yt-dlp -k --allow-unplayable-formats -f "bestvideo.3/bestvideo.2/bestvideo" --fixup never "{mpd}" --external-downloader aria2c --external-downloader-args "-x 16 -s 16 -k 1M" -o "{path}/{name}.mp4" --exec echo'
+    cmd2 = f'yt-dlp -k --allow-unplayable-formats -f ba --fixup never "{mpd}" --external-downloader aria2c --external-downloader-args "-x 16 -s 16 -k 1M" -o "{path}/{name}.m4a" --exec echo'
     os.system(cmd1)
     os.system(cmd2)
     avDir = os.listdir(path)
     print(avDir)
     print("Decrypting")
     
-    try:
-        for data in avDir:
-            if data.endswith("mp4"):
-                cmd3 = f'mp4decrypt {keys} --show-progress "{path}/{data}" "{path}/video.mp4"'
-                os.system(cmd3)
-                os.remove(f'{path}/{data}')
-            elif data.endswith("m4a"):
-                cmd4 = f'mp4decrypt {keys} --show-progress "{path}/{data}" "{path}/audio.m4a"'
-                os.system(cmd4)
-                os.remove(f'{path}/{data}')
-
-
-        cmd5 = f'ffmpeg -i "{path}/video.mp4" -i "{path}/audio.m4a" -c copy "{path}/{name}.mp4"'
-        os.system(cmd5)
-        os.remove(f"{path}/video.mp4")
-        os.remove(f"{path}/audio.m4a")
-        filename = f"{path}/{name}.mp4"
-        cc = f"{name}.mp4\n\n**Description:-**\n{CP}"
+    cmd3 = f'mp4decrypt --key {keys} --show-progress "{path}/{name}.mp4" "{path}/video.mp4"'
+    os.system(cmd3)
+    os.remove(f'{path}/{name}.mp4')
+    cmd4 = f'mp4decrypt --key {keys} --show-progress "{path}/{name}.m4a" "{path}/audio.m4a"'
+    os.system(cmd4)
+    os.remove(f'{path}/{name}.m4a')
+    
+    cmd5 = f'ffmpeg -i "{path}/video.mp4" -i "{path}/audio.m4a" -c copy "{path}/{name}.mp4"'
+    os.system(cmd5)
+    os.remove(f"{path}/video.mp4")
+    os.remove(f"{path}/audio.m4a")
+    filename = f"{path}/{name}.mp4"
+    cc = f"{name}.mp4\n\n**Description:-**\n{CP}"
         # await DownUP.sendVideo(bot, m, filename, cc, Thumb, name, prog, path)
-        UL = Upload_to_Tg(bot=bot, m=m, file_path=filename, name=name,
+    UL = Upload_to_Tg(bot=bot, m=m, file_path=filename, name=name,
                             Thumb=Thumb, path=path, show_msg=prog, caption=cc)
-        await UL.upload_video()
-        print("Done")
-    except Exception as e:
-        await prog.delete(True)
-        await m.reply_text(f"**Error**\n\n`{str(e)}`\n\nOr May be Video not Availabe in {Q}")
-    finally:
-        if os.path.exists(tPath):
-            shutil.rmtree(tPath)
-        shutil.rmtree(path)
-        await m.reply_text("Done")
+    await UL.upload_video()
+    print("Done")
+    await prog.delete(True)
+finally:
+    if os.path.exists(tPath):
+        shutil.rmtree(tPath)
+    shutil.rmtree(path)
+    await m.reply_text("Done")
