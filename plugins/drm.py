@@ -17,8 +17,8 @@ from handlers.tg import TgClient
     filters.incoming & filters.command("drm", prefixes=prefixes)
 )
 async def drm(bot: ace, m: Message):
-    path = f"{Config.DOWNLOAD_LOCATION}/{m.chat.id}"
-    tPath = f"{Config.DOWNLOAD_LOCATION}/THUMB/{m.chat.id}"
+    path = f"{Config.DOWNLOAD_LOCATION}"
+    tPath = f"{Config.DOWNLOAD_LOCATION}/THUMB"
     os.makedirs(path, exist_ok=True)
 
     inputData = await bot.ask(m.chat.id, "**Send**\n\nMPD\nNAME\nQUALITY\nCAPTION")
