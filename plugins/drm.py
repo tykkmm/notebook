@@ -17,8 +17,8 @@ from handlers.tg import TgClient
     filters.incoming & filters.command("drm", prefixes=prefixes)
 )
 async def drm(bot: ace, m: Message):
-    path = f"{Config.DOWNLOAD_LOCATION}"
-    tPath = f"{Config.DOWNLOAD_LOCATION}/THUMB"
+    path = f"{Config.DOWNLOAD_LOCATION}/{m.chat.id}"
+    tPath = f"{Config.DOWNLOAD_LOCATION}/THUMB/{m.chat.id}"
     os.makedirs(path, exist_ok=True)
 
     inputData = await bot.ask(m.chat.id, "**Send**\n\nMPD\nNAME\nQUALITY\nCAPTION")
@@ -35,8 +35,11 @@ async def drm(bot: ace, m: Message):
     Thumb = await BOT.thumb()
     prog  = await bot.send_message(m.chat.id, f"**Downloading Drm Video!** - [{name}]({mpd})")
 
-    cmd1 = f'yt-dlp -o "{path}/fileName.%(ext)s" -f "bestvideo[height<={int(Q)}]+bestaudio" --allow-unplayable-format --external-downloader aria2c "{mpd}"'
+#    cmd1 = f'yt-dlp -o "{path}/fileName.%(ext)s" -f "bestvideo.{resl}/bestvideo.2/bestvideo" --allow-unplayable-format --external-downloader aria2c "{mpd}"'
+    cmd1 = f'yt-dlp -k --allow-unplayable-formats -f "bestvideo.3/bestvideo.2/bestvideo" --fixup never "{mpd}" --external-downloader aria2c --external-downloader-args "-x 16 -s 16 -k 1M" -o "{path}/{name}.%(ext)s" --exec echo'
+    cmd2 = f'yt-dlp -k --allow-unplayable-formats -f ba --fixup never "{mpd}" --external-downloader aria2c --external-downloader-args "-x 16 -s 16 -k 1M" -o "{path}/{name}.%(ext)s" --exec echo'
     os.system(cmd1)
+    os.system(cmd2)
     avDir = os.listdir(path)
     print(avDir)
     print("Decrypting")
@@ -44,17 +47,17 @@ async def drm(bot: ace, m: Message):
     try:
         for data in avDir:
             if data.endswith("mp4"):
-                cmd2 = f'mp4decrypt {keys} --show-progress "{path}/{data}" "{path}/video.mp4"'
-                os.system(cmd2)
-                os.remove(f'{path}/{data}')
-            elif data.endswith("m4a"):
-                cmd3 = f'mp4decrypt {keys} --show-progress "{path}/{data}" "{path}/audio.m4a"'
+                cmd3 = f'mp4decrypt {keys} --show-progress "{path}/{data}" "{path}/video.mp4"'
                 os.system(cmd3)
                 os.remove(f'{path}/{data}')
+            elif data.endswith("m4a"):
+                cmd4 = f'mp4decrypt {keys} --show-progress "{path}/{data}" "{path}/audio.m4a"'
+                os.system(cmd4)
+                os.remove(f'{path}/{data}')
 
 
-        cmd4 = f'ffmpeg -i "{path}/video.mp4" -i "{path}/audio.m4a" -c copy "{path}/{name}.mp4"'
-        os.system(cmd4)
+        cmd5 = f'ffmpeg -i "{path}/video.mp4" -i "{path}/audio.m4a" -c copy "{path}/{name}.mp4"'
+        os.system(cmd5)
         os.remove(f"{path}/video.mp4")
         os.remove(f"{path}/audio.m4a")
         filename = f"{path}/{name}.mp4"
