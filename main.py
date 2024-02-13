@@ -9,8 +9,6 @@ import tgcrypto
 from pyromod import listen
 import logging
 from tglogging import TelegramLogHandler
-import ffprobe
-import ffmpeg
 
 # Config 
 class Config(object):
