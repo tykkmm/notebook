@@ -1,4 +1,4 @@
-pyrogram
+pip install --upgrade pyrogram
 tgcrypto
 requests
 pyromod
